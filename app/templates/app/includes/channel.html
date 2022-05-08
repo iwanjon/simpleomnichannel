@@ -1,0 +1,27 @@
+{% load static %}
+
+<li>
+    <article class="post">
+            <a href="{% url "channel-detail" channel.id  %}">
+                <img src="" alt={{ channel.name }}>
+
+                <div class="post__content">
+                    <p>{{ channel.name  }}</p>
+                    <h3>{{ channel.name }}</h3>
+                </div>
+            </a>
+            <button>
+                <a href=" {% url "channel-edit" channel.id %}"> 
+                    edit data 
+                </a>
+            </button>
+            <br>
+            <form method="POST" action="{% url "channel-delete" channel.id %}">
+                {% csrf_token %}<button type="submit" value="DELETE" id="delete" class="delete"> 
+                    delete data
+                    </button>
+             </form>
+
+    </article>
+
+</li>

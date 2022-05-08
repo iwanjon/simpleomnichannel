@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} 
+
+
+{% block subtitle %} {% endblock %}
+
+
+{% endblock %}
+
+{% block cssfile %} 
+<link rel="stylesheet" href="{% static "app/css/post-detail.css" %}">
+{% endblock %}
+
+
+{% block content%}
+<main>
+<h1>
+
+
+{% block image_block %}{% endblock %}
+
+ {% for k, v in data_dict.items %}
+    <h2> {{v}}  </h2>
+{% endfor %} 
+
+
+
+
+
+</h1>
+
+
+
+</main>
+
+{% endblock%}

@@ -1,0 +1,27 @@
+{% load static %}
+
+<li>
+    <article class="post">
+            <a href="{% url "delivery-detail" delivery.id  %}">
+                <img src="" alt={{ delivery.provider }}>
+
+                <div class="post__content">
+                    <p>{{ delivery.provider  }}</p>
+                    <h3>{{ delivery.service }}</h3>
+                </div>
+            </a>
+            <button>
+                <a href=" {% url "delivery-edit" delivery.id %}"> 
+                    edit data 
+                </a>
+            </button>
+            <br>
+            <form method="POST" action="{% url "delivery-delete" delivery.id %}">
+                {% csrf_token %}<button type="submit" value="DELETE" id="delete" class="delete"> 
+                    delete data
+                    </button>
+             </form>
+
+    </article>
+
+</li>

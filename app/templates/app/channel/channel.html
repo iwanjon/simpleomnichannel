@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} 
+
+{{title}}
+{% endblock %}
+
+{% block cssfile %} 
+<link rel="stylesheet" href="{% static "app/css/all-posts.css" %}">
+<link rel="stylesheet" href="{% static "app/css/post.css" %}">
+{% endblock %}
+
+
+{% block content%}
+
+
+<section id="all-posts">
+<div class="buttons">
+
+    <div class="action_btn">
+
+    <button><a href="{% url "channel-form"  %}">add data</a></button>
+    <!-- <button><a href="{% url "channel-table-list"  %}"> list view</a></button> -->
+    <button><a href="{% url "channel-table-view"  %}"> table view</a></button>
+
+    </div>
+
+</div>
+
+    <h2>{{title}}</h2>
+    <ul>
+        {% for channel in object_list %}
+
+        {% include "app/includes/channel.html" %}
+
+
+        {% endfor %}
+    </ul>
+
+</section>
+
+{% if is_paginated %}
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in paginator.page_range %}
+      {% if page_obj.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+
+
+{% endblock%}
+
+{% block jscript%}
+
+<script type="text/javascript"> 
+    var a = "{% url 'channel-form'  %}";
+ </script>
+
+ <script src="{% static "app/js/scriptjs.js" %}"></script>
+{% endblock%}

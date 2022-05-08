@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} 
+
+Customer page
+{% endblock %}
+
+{% block cssfile %} 
+<link rel="stylesheet" href="{% static "app/css/post-detail.css" %}">
+{% endblock %}
+
+
+{% block content%}
+<section id="comment-form">
+    <h2> Customer edit</h2>
+    <form action="{% url "customer-edit" id %}" method="POST">
+        {% csrf_token %}
+        <!-- {{comment_form}} -->
+        {% for aaa in form %}
+        <div class="form-control  {% if aaa.errors %} invalid {% endif %}"  >
+            {{ aaa.label_tag }}
+            {{ aaa }}
+            {{ aaa.errors }}
+        </div>
+        
+        {% endfor %}
+
+        <button> submit </button>
+    </form>
+</section>
+
+{% endblock%}

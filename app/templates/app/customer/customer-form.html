@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} 
+
+Customer page
+{% endblock %}
+
+
+{% block extra_head %}
+
+
+{% endblock %}
+
+{% block cssfile %} 
+<link rel="stylesheet" href="{% static "app/css/post-detail.css" %}">
+{% endblock %}
+
+
+{% block content%}
+<div id="alert-box"></div>
+<div id="image-box"></div>
+<br>
+
+<section id="comment-form">
+    <h2> Customer </h2>
+    {% if id %}
+    <form action="{% url "customer-edit" id %}" method="POST" id="upload-form" enctype="multipart/form-data">
+    {% elif is_delete %}
+    <form action="" method="POST" id="upload-form">
+    {% else %}
+    <form action="{% url "customer-form"  %}" method="POST" id="upload-form" enctype="multipart/form-data">
+    {% endif %}
+        {% csrf_token %}
+        <!-- {{comment_form}} -->
+        {% for aaa in form %}
+        <div class="form-group  {% if aaa.errors %} invalid {% endif %}"  >
+            {{ aaa.label_tag }}
+            {{ aaa }}
+            {{ aaa.errors }}
+           
+        </div>
+
+        {% endfor %}
+
+        <button> submit </button>
+
+       <a href="/"> <input id="buttoninput" type="button" name="cancel" value="cancel" /> </a>
+
+
+    </form>
+
+
+
+</section>
+
+<br>
+<div id="progress-box" class="not-visible">progress</div>
+<div id="cancel-box" class="not-visible">
+    <button id="cancel-btn" class="btn btn-danger">cancel</button>
+</div>
+<script src={% static 'app/js/style.js' %} defer></script>
+<script src={% static 'app/js/main.js' %} defer></script>
+{% endblock%}

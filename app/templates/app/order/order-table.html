@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} 
+
+{{title}}
+{% endblock %}
+
+{% block cssfile %} 
+<link rel="stylesheet" href="{% static "app/css/all-posts.css" %}">
+<link rel="stylesheet" href="{% static "app/css/post.css" %}">
+{% endblock %}
+
+
+{% block content%}
+
+
+<section id="all-posts">
+<!-- <div class="buttons">
+
+    <div class="action_btn">
+
+    <button><a href="{% url "order-form"  %}">add data</a></button>
+    <button><a href="{% url "order-table-list"  %}"> list view</a></button>
+
+    </div>
+
+</div> -->
+
+
+
+
+
+
+    <h2>{{title}}</h2>
+    <br>
+    <div class="row">
+      <div class="col">
+        <div class="card card-body">
+    
+          <form method="get">
+            {{ filtered.form }}
+    
+            <button class="btn btn-primary" type="submit">Search</button>
+          </form>
+    
+        </div>
+      </div>
+      
+    </div>
+    <br>
+
+
+    <div class="row">
+      <div class="col-md">
+
+        <div class="card card-body">
+        
+          <table class="table table-sm">
+            <tr>
+              <th>invoice</th>
+              <th>created</th>
+              <th>is_paid</th>
+              <th>destination</th>
+              <th>product</th>
+              <th>payment</th>
+              <th>delivery</th>
+              <th>Update</th>
+              <th>Remove</th>
+            </tr>
+    
+            {% for order in object_list %}
+    
+            <tr>
+              <td>{{order.invoice}}</td>
+              <td>{{order.created}}</td>
+              <td>{{order.is_paid}}</td>
+              <td>{{order.destination}}</td>
+              <td>
+                {% for tag in order.product.all %}
+                {{ tag }}
+                {% endfor %}
+              </td>
+              <td>{{order.payment}}</td>
+              <td>{{order.delivery}}</td>
+              <td><a class="btn btn-sm btn-info" href="{% url 'order-edit' order.id %}">Update</a></td>
+    
+              <!-- <td><a class="btn btn-sm btn-danger delete" href="{% url 'order-delete' order.id %}">Delete</a></td> -->
+              <td>   
+                <form method="POST" action="{% url "order-delete" order.id %}">
+                  {% csrf_token %}<button type="submit" value="DELETE" id="delete" class="btn btn-sm btn-danger delete"> 
+                      delete data
+                      </button>
+               </form>
+              </td>
+            </tr>
+            {% endfor %}
+    
+          </table>
+        </div>
+      </div>
+    </div>
+    
+
+
+
+</section>
+
+{% if is_paginated %}
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in paginator.page_range %}
+      {% if page_obj.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+
+
+{% endblock%}
+
+{% block jscript%}
+
+<script type="text/javascript"> 
+    var a = "{% url 'order-form'  %}";
+ </script>
+
+ <script src="{% static "app/js/scriptjs.js" %}"></script>
+{% endblock%}

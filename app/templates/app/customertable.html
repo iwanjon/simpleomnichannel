@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.js"></script>
+   <script src="{% static "app/js/table.js" %}"></script>
+    <script type="text/javascript">
+    
+        var TESTMODEL_LIST_JSON_URL = '{{ urll }}';
+        var columndef = "{{ coldef }}";
+        var edit_url = '{{editurl}}';
+        var delete_url = '{{deleteurl}}';
+ 
+
+        console.log({"url":"{% url 'customer-table-json' %}"},  columndef, TESTMODEL_LIST_JSON_URL)
+        
+        // translations for datatables
+        var dt_language = {
+            "emptyTable":     "{% trans "No data available in table" %}",
+            "info":           "{% trans "Showing _START_ to _END_ of _TOTAL_ entries" %}",
+            "infoEmpty":      "{% trans "Showing 0 to 0 of 0 entries" %}",
+            "infoFiltered":   "{% trans "(filtered from _MAX_ total entries)" %}",
+            "infoPostFix":    "",
+            "thousands":      ",",
+            "lengthMenu":     "{% trans "Show _MENU_ entries" %}",
+            "loadingRecords": "{% trans "Loading..." %}",
+            "processing":     "{% trans "Processing..." %}",
+            "search":         "{% trans "Search:" %}",
+            "zeroRecords":    "{% trans "No matching records found" %}",
+            "paginate": {
+                "first":      "{% trans "First" %}",
+                "last":       "{% trans "Last" %}",
+                "next":       "{% trans "Next" %}",
+                "previous":   "{% trans "Previous" %}"
+            },
+            "aria": {
+                "sortAscending":  "{% trans ": activate to sort column ascending" %}",
+                "sortDescending": "{% trans ": activate to sort column descending" %}"
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block cssfile %} 
+<link rel="stylesheet" href="{% static "app/css/post-detail.css" %}">
+{% endblock %}
+
+
+{% block content %}
+
+
+<section id="comment-form-table">
+    <form method="POST" action="" id="delete-form">
+        {% csrf_token %}<button type="submit" value="DELETE" id="delete" class="delete"> 
+            delete data
+            </button>
+     </form>
+
+     <button id="editbutton"> <a href=""> edit </a></button>
+    <table class="datatable"   >
+        <thead>
+            <!-- <th>{% trans "id" %}</th>
+            <th>{% trans "first_name" %}</th>
+            <th>{% trans "email" %}</th>
+            <th>{% trans "last_name" %}</th> -->
+
+            <!-- <th>id</th>
+            <th>first_name</th>
+            <th>{% trans "email" %}</th>
+            <th>{% trans "last_name" %}</th> -->
+
+                {% for i in datahead %}
+                <th> {{i}} </th>
+                {% endfor %}
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+</section>
+{% endblock %}

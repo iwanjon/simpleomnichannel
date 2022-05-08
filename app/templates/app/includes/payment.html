@@ -1,0 +1,27 @@
+{% load static %}
+
+<li>
+    <article class="post">
+            <a href="{% url "payment-detail" payment.id  %}">
+                <img src="" alt={{ payment.invoice }}>
+
+                <div class="post__content">
+                    <p>{{ payment.bank  }}</p>
+                    <h3>{{ payment.created }}</h3>
+                </div>
+            </a>
+            <button>
+                <a href=" {% url "payment-edit" payment.id %}"> 
+                    edit data 
+                </a>
+            </button>
+            <br>
+            <form method="POST" action="{% url "payment-delete" payment.id %}">
+                {% csrf_token %}<button type="submit" value="DELETE" id="delete" class="delete"> 
+                    delete data
+                    </button>
+             </form>
+
+    </article>
+
+</li>

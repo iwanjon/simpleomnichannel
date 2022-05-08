@@ -1,0 +1,27 @@
+{% load static %}
+
+<li>
+    <article class="post">
+            <a href="{% url "order-detail" order.id  %}">
+                <img src="" alt={{ order.invoice }}>
+
+                <div class="post__content">
+                    <h3>{{ order.invoice }}</h3>
+                    <p>{{ order.product  }}</p>
+                </div>
+            </a>
+            <button>
+                <a href=" {% url "order-edit" order.id %}"> 
+                    edit data 
+                </a>
+            </button>
+            <br>
+            <form method="POST" action="{% url "order-delete" order.id %}">
+                {% csrf_token %}<button type="submit" value="DELETE" id="delete" class="delete"> 
+                    delete data
+                    </button>
+             </form>
+
+    </article>
+
+</li>

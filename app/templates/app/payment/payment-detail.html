@@ -1,0 +1,17 @@
+{% extends "app/base-detail.html" %}
+
+{% load static %}
+
+{% block subtitle %} 
+
+Customer page
+{% endblock %}
+
+{% block image_block %} 
+
+{% if payment.image  %}
+<img src="{{ payment.image.url }}" alt="blank name">
+{% endif  %}
+
+
+{% endblock%}

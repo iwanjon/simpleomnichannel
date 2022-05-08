@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} 
+
+{{title}}
+{% endblock %}
+
+{% block cssfile %} 
+<link rel="stylesheet" href="{% static "app/css/all-posts.css" %}">
+<link rel="stylesheet" href="{% static "app/css/post.css" %}">
+{% endblock %}
+
+
+{% block content%}
+
+
+<section id="all-posts">
+<div class="buttons">
+
+    <div class="action_btn">
+
+    <button><a href="{% url "product-form"  %}">add data</a></button>
+    <button><a href="{% url "product-table-view"  %}">table view</a></button>
+    <!-- <button><a href="{% url "product-table-list"  %}"> list view</a></button> -->
+
+    </div>
+
+</div>
+
+    <h2>{{title}}</h2>
+    <ul>
+        {% for product in object_list %}
+
+        {% include "app/includes/product.html" %}
+
+
+        {% endfor %}
+    </ul>
+
+</section>
+
+{% endblock%}
+
+{% block jscript%}
+
+<script type="text/javascript"> 
+    var a = "{% url 'product-form'  %}";
+ </script>
+
+ <script src="{% static "app/js/scriptjs.js" %}"></script>
+{% endblock%}
