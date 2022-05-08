@@ -1,7 +1,7 @@
 # simpleomnichannel
 simpleomnichannel
 
-- this code create with python 3.10
+- this code created with python 3.10
 
 - create new env
 - run pip install -r requirements.txt
