@@ -1,8 +1,10 @@
-console.log('hello world')
+console.log('hello world upload')
 console.log("ccc")
 const uploadForm = document.getElementById('upload-form')
 // console.log(uploadForm)
-const input = document.getElementById('id_image')
+const input = document.getElementById('id_file')
+const butttonsubmit = document.getElementById('buttoninput')
+
 // console.log(input)
 //  $('.form-group input').addClass("form-control")
 const alertBox = document.getElementById('alert-box')
@@ -10,30 +12,35 @@ const imageBox = document.getElementById('image-box')
 const progressBox = document.getElementById('progress-box')
 const cancelBox = document.getElementById('cancel-box')
 const cancelBtn = document.getElementById('cancel-btn')
-const submitbutton = document.getElementById('subsub')
-console.log(submitbutton,"ccc")
+// const submitbutton = document.getElementById('subsub')
+// console.log(submitbutton,"ccc")
 
 const csrf = document.getElementsByName('csrfmiddlewaretoken')
 
-input.addEventListener("change", ()=>{
+butttonsubmit.addEventListener("click", ()=>{
     progressBox.classList.remove('not-visible')
     // cancelBox.classList.remove('not-visible')
 
     const img_data = input.files[0]
     const url = URL.createObjectURL(img_data)
-    console.log(img_data)
+    console.log(img_data,"image data", img_data["File"], img_data['file'])
 
-    const fd = new FormData()
+    let fd = new FormData()
     fd.append('csrfmiddlewaretoken', csrf[0].value)
-    fd.append('image', img_data)
+    fd.append('file', img_data)
+    console.log(fd,"fffdd")
+    console.log(fd.file,"fffdd")
+    console.log(fd.csrfmiddlewaretoken,"fffdd")
 
     $.ajax({
         type:'POST',
         url: uploadForm.action,
         enctype: 'multipart/form-data',
         data: fd,
+        processData : false,
+        contentType : false,
         beforeSend: function(){
-            console.log('before')
+            console.log('before', url,"ll")
             alertBox.innerHTML= ""
             imageBox.innerHTML = ""
         },

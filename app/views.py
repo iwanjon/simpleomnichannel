@@ -1,4 +1,5 @@
 from sre_constants import SUCCESS
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
@@ -10,6 +11,7 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from . forms import *
 from .filters import *
 from django.urls import reverse
+import io, csv
 # Create your views here.
 
 
@@ -237,7 +239,7 @@ class CustomerEditForm(UpdateView):
         #  binding instance for form 
         xx = form.save(commit=False)
         xx.email="mamam@gg.cc"
-        # print(ret, "fff",self,"fff", form,"dfdfdf",xx)
+        print(ret, "fff",self,"fff", form,"dfdfdf",xx)
         xx.save()
         return ret
         
@@ -546,14 +548,28 @@ class OrderEditForm(UpdateView):
         # print(ret["instance"],"fff")
         return ret
     
+
+    
     def form_valid(self, form):
         ret = super().form_valid(form)
         #  binding instance for form 
+        
         xx = form.save(commit=False)
-        # print(ret, "fff",self,"fff", form,"dfdfdf",xx)
+        ee=Order.objects.get(pk=xx.id)
+        # for aai in ee.product.all():
+        #     if aai.stock.stock == 10:
+        #         print("this event")
+        #         # raise Exception('OMG')
+        #         # return HttpResponseRedirect(self.get_success_url())
+        #         return self.form_invalid(form)
+        print(ret, "fff",self,"fff", form,"dfdfdf",xx, xx.id, ee)
+        print(ee.product,"product from oreder")
+        print(ee.product.all()[0],"productr")
+        print(ee.product.all()[0].stock.stock,"mongo")
         xx.save()
         return ret
         
+
 
 class OrderDeleteView(DeleteView):
     model = Order
@@ -1136,3 +1152,44 @@ class ChannelDeleteView(DeleteView):
         ret= super().get_context_object_name(obj)
         # print(obj, "obj", self)
         return ret
+    
+    
+####################################################################################
+### Upload
+
+def uploadFIle(request):
+    form=UploadForm()
+    template = 'app/upload/upload.html'
+    prompt={
+        "order":"order of csv must bla bla bla"
+    }
+
+    if request.method== 'GET':
+        return render(request, template, {"form":form})
+    if request.method == 'POST':
+        form = UploadForm(request.POST, request.FILES)
+    csv_file = "empty"
+    if form.is_valid():
+        print(form.cleaned_data)
+        # csv_file = form.cleaned_data['csv_file']
+    
+    print(request,"rererer", form, request.POST, csv_file)
+    csv_file=request.FILES['file']
+    dataset=csv_file.read().decode('UTF-8')
+    io_string=io.StringIO(dataset)
+    next(io_string)
+    for col in csv.reader(io_string, delimiter=',',quotechar="|"):
+        print(col)
+        xx,created=Product.objects.update_or_create(
+            name=col[0],
+            code=col[1],
+            channel=Channel.objects.get(pk=int(col[2])),
+            status= int(col[3])
+        )
+        # _,created = Contact.object.update_or_create(
+        #     co=col[0],
+        #     cc=col[1]
+        # )
+        
+    context ={}
+    return render(request, template,  {"form":form})

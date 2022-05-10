@@ -47,3 +47,10 @@ class PaymentForm(forms.ModelForm):
     class Meta:
         model= Payment
         fields= "__all__"
+
+
+class UploadForm(forms.Form): #Note that it is not inheriting from forms.ModelForm
+    # a = forms.CharField(max_length=20)
+    file = forms.FileField()
+
+    #All my attributes here

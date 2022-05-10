@@ -77,4 +77,8 @@ urlpatterns = [
     path('stock/<int:pk>/delete', views.StockDeleteView.as_view(), name="stock-delete"),
     path('stock/<int:pk>/edit', views.StockEditForm.as_view(), name="stock-edit"),
     path('stock-form/', views.Stock_Form.as_view(), name="stock-form"),
+    ##########################
+    ##########################
+    ##########################
+    path('upload-form/', views.uploadFIle, name="upload-form"),
 ]

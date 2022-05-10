@@ -39,7 +39,7 @@ class Customer(models.Model):
 class Product(models.Model):
     name= models.CharField(max_length=50)
     code= models.CharField(max_length=10)
-    channel=models.OneToOneField("Channel",  on_delete=models.CASCADE, null=True)
+    channel=models.ForeignKey("Channel",  on_delete=models.SET_NULL, null=True)
     status=models.BooleanField(null=True)
     
     def __str__(self):
@@ -75,6 +75,22 @@ class Order(models.Model):
     def __str__(self):
         return self.invoice
     
+    def save(self,*args, **kwargs):
+        print(self, "mumo")
+        try:
+            ee=Order.objects.get(pk=self.id)
+            print(ee, "koko")
+        # if ee:
+            for aai in ee.product.all():
+                if aai.stock.stock == 10:
+                    print(self,"self",args,kwargs, ee)
+                    return
+        except:
+            for aai in self.product.all():
+                if aai.stock.stock == 10:
+                    print(self,"self",args,kwargs,"except")
+                    return
+        return super().save(*args, **kwargs)
     
 class Delivery(models.Model):
     service= models.CharField(max_length=50)
@@ -83,7 +99,6 @@ class Delivery(models.Model):
 
     def __str__(self):
         return self.provider
-    
     
 class Channel(models.Model):
     name= models.CharField(max_length=50)
