@@ -1,9 +1,19 @@
-from sre_constants import SUCCESS
+from distutils.log import error
+from errno import errorcode
+from logging import exception
+import os
+# from sre_constants import SUCCESS
+# from django import views
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
+from django.views import View
 from django.views.generic.edit import FormView, UpdateView, DeleteView
 from requests import request
+from django.http import JsonResponse
+# from app.tasks import go_to_sleep, go_insert_data,save_product_from_csv
+from app.tasks import *
+from omnichannel.settings import BASE_DIR
 from .models import *
 from django.db.models import Q
 from django.views.generic import TemplateView
@@ -1155,7 +1165,9 @@ class ChannelDeleteView(DeleteView):
     
     
 ####################################################################################
-### Upload
+### Upload ajax
+####################################################################################
+### just trial
 
 def uploadFIle(request):
     form=UploadForm()
@@ -1193,3 +1205,106 @@ def uploadFIle(request):
         
     context ={}
     return render(request, template,  {"form":form})
+
+    
+####################################################################################
+### Upload-celery
+####################################################################################
+### just trial
+
+def uploadFIleCelery(request):
+    form=UploadForm()
+    template = 'app/upload/upload_celery.html'
+    prompt={
+        "order":"order of csv must bla bla bla"
+    }
+
+    if request.method== 'GET':
+        return render(request, template, {"form":form})
+    if request.method == 'POST':
+        # task = go_to_sleep.delay(1)
+        # print(task,task.task_id,"uiuiuiuuiu")
+        form = UploadForm(request.POST, request.FILES)
+    csv_file = "empty"
+    if form.is_valid():
+        print(form.cleaned_data)
+        # csv_file = form.cleaned_data['csv_file']
+        print(os.path,"filepath")
+        handle_uploaded_file(request.FILES['file'])
+        print(BASE_DIR,"filepath")
+        print(request.FILES['file'],"filepathsws")
+        file_path = os.path.join(BASE_DIR, "media",str(request.FILES['file']))
+        print(file_path,"filepath")
+        
+    task=save_product_from_csv.delay(file_path)
+
+    return JsonResponse({ 'task_id' : task.task_id})
+
+
+
+
+####################################################################################
+### celery
+####################################################################################
+### just trail
+
+def index(request):
+    task = go_to_sleep.delay(1)
+    return render(request, 'app/index.html', {'task_id' : task.task_id})
+
+
+
+
+####################################################################################
+### Upload-celery
+
+class UploadFileCeleryCLass(View):
+    form=UploadForm()
+    template = 'app/upload/upload_celery.html'
+    
+    def get(self, request):
+        return render(request, self.template, {"form":self.form})
+        
+    def post(self,request):
+        form = UploadForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            print(form.cleaned_data)
+            print(os.path,"filepath")
+            
+            handle_uploaded_file(request.FILES['file'])
+            print(BASE_DIR,"filepath")
+            print(request.FILES['file'],"filepathsws")
+            
+            file_path = os.path.join(BASE_DIR, "media",str(request.FILES['file']))
+            print(file_path,"filepath")
+            
+            is_header=check_header(file_path)
+            
+            if not is_header:
+                return JsonResponse({'status':'false','message':"invalid header, header must be 'name','code','channel','status' sequentially"},status=400)
+            
+            task=save_product_from_csv.delay(file_path)
+            return JsonResponse({ 'task_id' : task.task_id})
+        
+        return JsonResponse({"message":"invalid form data", "status":400},status=400)
+        
+
+
+def check_header(file_path):
+    
+    with open(file_path, 'r') as fp:
+        productss = csv.reader(fp, delimiter=',')
+        header=next(productss)
+        print(header, " this is header")
+        fp.close()
+        
+    if header != ['name','code','channel','status']:
+        return False
+
+    return True
+
+def handle_uploaded_file(f):
+    with open('media/'+str(f), 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)

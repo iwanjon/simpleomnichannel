@@ -81,4 +81,6 @@ urlpatterns = [
     ##########################
     ##########################
     path('upload-form/', views.uploadFIle, name="upload-form"),
+    path('upload-form-celery/', views.UploadFileCeleryCLass.as_view(), name="upload-form-celery"),
+    path('upload-twet/', views.index, name="index"),
 ]

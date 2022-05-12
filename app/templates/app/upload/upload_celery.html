@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} 
+
+Customer page
+{% endblock %}
+
+
+{% block extra_head %}
+
+
+{% endblock %}
+
+{% block cssfile %} 
+<link rel="stylesheet" href="{% static "app/css/post-detail.css" %}">
+{% endblock %}
+
+
+
+{% block content%}
+
+<div id="alert-box"></div>
+<div id="image-box"></div>
+<br>
+
+<section id="comment-form-upload">
+<form action="{% url 'upload-form-celery' %}" method="POST" enctype="multipart/form-data"   id="upload-form" >
+    {% csrf_token %}
+    {{form.as_p}}
+    <!-- <button type="submit">Submit</button> -->
+    <input id="buttoninput" type="button" name="submit" value="submit" /> 
+</form> 
+
+
+</section>
+<div id="progress-box" class="not-visible">progress</div>
+
+<div id="cancel-box" class="not-visible">
+    <button id="cancel-btn" class="btn btn-danger">cancel</button>
+</div>
+
+<div class='progress-wrapper'>
+    <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
+  </div>
+  <div id="progress-bar-message" class="not-visible">Waiting to added the data</div>
+  <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+<script>
+
+    console.log('hello world upload')
+    console.log("ccc")
+
+    const uploadForm = document.getElementById('upload-form')
+    console.log(uploadForm.action)
+
+    const input = document.getElementById('id_file')
+    const butttonsubmit = document.getElementById('buttoninput')
+    
+    const alertBox = document.getElementById('alert-box')
+    const imageBox = document.getElementById('image-box')
+    const progressBox = document.getElementById('progress-box')
+    const messageWaiting = document.getElementById('progress-bar-message')
+
+    const cancelBox = document.getElementById('cancel-box')
+    const cancelBtn = document.getElementById('cancel-btn')
+    // const submitbutton = document.getElementById('subsub')
+    // console.log(submitbutton,"ccc")
+    
+    const csrf = document.getElementsByName('csrfmiddlewaretoken')
+    
+    butttonsubmit.addEventListener("click", ()=>{
+        progressBox.classList.remove('not-visible')
+        
+    
+        const img_data = input.files[0]
+        const url = URL.createObjectURL(img_data)
+        console.log(img_data,"image data", img_data["File"], img_data['file'])
+    
+        let fd = new FormData()
+        fd.append('csrfmiddlewaretoken', csrf[0].value)
+        fd.append('file', img_data)
+        console.log(fd,"fffdd")
+        console.log(fd.file,"fffdd")
+        console.log(fd.csrfmiddlewaretoken,"fffdd")
+    
+        $.ajax({
+            type:'POST',
+            url: uploadForm.action,
+            enctype: 'multipart/form-data',
+            data: fd,
+            processData : false,
+            contentType : false,
+            beforeSend: function(){
+                console.log('before', url,"ll")
+                alertBox.innerHTML= ""
+                imageBox.innerHTML = ""
+            },
+            xhr: function(){
+                const xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener('progress', e=>{
+                    // console.log(e)
+                    if (e.lengthComputable) {
+                        const percent = e.loaded / e.total * 100
+                        console.log(percent)
+                        progressBox.innerHTML = `<div class="progress">
+                                                    <div class="progress-bar" role="progressbar" style="width: ${percent}%" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <p>${percent.toFixed(1)}%</p>`
+                    }
+    
+                })
+                cancelBtn.addEventListener('click', ()=>{
+                    xhr.abort()
+                    setTimeout(()=>{
+                        uploadForm.reset()
+                        progressBox.innerHTML=""
+                        alertBox.innerHTML = ""
+                        cancelBox.classList.add('not-visible')
+                    }, 2000)
+                })
+                return xhr
+            },
+            success: function(response, status){
+                console.log("reee", response,"response", response['task_id'], response.task_id, status)
+        
+                alertBox.innerHTML = `<div class="alert alert-success" role="alert">
+                                        Successfully uploaded the file...
+                                        please wait the data finish to be added
+                                    </div>`;
+                               
+
+                $(function () {
+                    messageWaiting.classList.remove('not-visible');
+                    var progressUrl = "{% url 'celery_progress:task_status' 'task-id-stub' %}";
+                    var progressUrll = progressUrl.replace('task-id-stub', response['task_id']);
+                    CeleryProgressBar.initProgressBar(progressUrll);
+                })
+                    
+     
+       
+              
+                cancelBox.classList.add('not-visible')
+            },
+            error: function(xhr, status, error){
+                console.log(error, "this is error", xhr, "status",status)
+                console.log( xhr.responseText, "status",status)
+                
+                alertBox.innerHTML = `<div class="alert alert-danger" role="alert">
+                                        Ups... something went wrong
+                                    </div>`
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        })
+    });
+
+
+
+
+</script>
+
+
+{% endblock %}
