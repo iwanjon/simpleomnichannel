@@ -30,7 +30,7 @@ class Customer(models.Model):
     image= models.ImageField(blank =True, null=True)
     handphone= models.IntegerField()
     address= models.CharField(max_length=100)
-    order=models.OneToOneField("Order",  on_delete=models.CASCADE, null=True)
+    order=models.OneToOneField("Order",related_name="customer_order",  on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         return self.first_name
@@ -39,7 +39,7 @@ class Customer(models.Model):
 class Product(models.Model):
     name= models.CharField(max_length=50)
     code= models.CharField(max_length=10)
-    channel=models.ForeignKey("Channel",  on_delete=models.SET_NULL, null=True)
+    channel=models.ForeignKey("Channel", related_name="product_channel", on_delete=models.SET_NULL, null=True)
     status=models.BooleanField(null=True)
     
     def __str__(self):
@@ -48,7 +48,7 @@ class Product(models.Model):
     
 class Stock(models.Model):
     stock=models.IntegerField()
-    product = models.OneToOneField("Product",  on_delete=models.CASCADE, null=True)
+    product = models.OneToOneField("Product", related_name="stock_product",  on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         return self.stock
@@ -68,29 +68,29 @@ class Order(models.Model):
     created=models.DateTimeField(auto_now=True)
     is_paid=models.BooleanField(default=False)
     destination=models.CharField(max_length=100)
-    product = models.ManyToManyField("Product")
-    payment=models.ForeignKey("Payment", on_delete=models.CASCADE, null=True)
-    delivery=models.ForeignKey("Delivery", on_delete=models.CASCADE, null=True)
+    product = models.ManyToManyField("Product",related_name="order_product")
+    payment=models.ForeignKey("Payment", on_delete=models.CASCADE, null=True,related_name="order_payment")
+    delivery=models.ForeignKey("Delivery", on_delete=models.CASCADE, null=True, related_name="order_delivery")
 
     def __str__(self):
         return self.invoice
     
-    def save(self,*args, **kwargs):
-        print(self, "mumo")
-        try:
-            ee=Order.objects.get(pk=self.id)
-            print(ee, "koko")
-        # if ee:
-            for aai in ee.product.all():
-                if aai.stock.stock == 10:
-                    print(self,"self",args,kwargs, ee)
-                    return
-        except:
-            for aai in self.product.all():
-                if aai.stock.stock == 10:
-                    print(self,"self",args,kwargs,"except")
-                    return
-        return super().save(*args, **kwargs)
+    # def save(self,*args, **kwargs):
+    #     print(self, "mumo")
+    #     try:
+    #         ee=Order.objects.get(pk=self.id)
+    #         print(ee, "koko")
+    #     # if ee:
+    #         for aai in ee.product.all():
+    #             if aai.stock.stock == 10:
+    #                 print(self,"self",args,kwargs, ee)
+    #                 return
+    #     except:
+    #         for aai in self.product.all():
+    #             if aai.stock.stock == 10:
+    #                 print(self,"self",args,kwargs,"except")
+    #                 return
+    #     return super().save(*args, **kwargs)
     
 class Delivery(models.Model):
     service= models.CharField(max_length=50)

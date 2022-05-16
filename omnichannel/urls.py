@@ -30,6 +30,7 @@ handler500 = 'app.views.server_error'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("app.urls")),
+    path('', include("app.api.urls")),
     path('celery-progress/', include("celery_progress.urls")),
 ]
 
