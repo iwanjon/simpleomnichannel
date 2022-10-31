@@ -23,9 +23,9 @@ simpleomnichannel
 ######################################
 ######################################
 - for using example data:
-    create 4 number channel first, because channel need 4 channel to be run successfully, go to menu channel to create channel.
-     create media folder in the same level as manage.py
-     exmple data in folder contoh data
+- create 4 number channel first, because channel need 4 channel to be run successfully, go to menu channel to create channel.
+- create media folder in the same level as manage.py
+- exmaple data in folder contoh data
 ######################################
 ######################################
 - make sure that redis service is running(just google about it, this code use default port of redis, check it in setting.py)
