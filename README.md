@@ -15,8 +15,8 @@ simpleomnichannel
 
 ######################################
 ######################################
-- python manage.py makemigrations
-- python manage.py migrate
+- run python manage.py makemigrations
+- run python manage.py migrate
 - create superuser (python manage.py createsuperuser) run in terminal at thesame level as manage.py
 - run python manage.py runserver
 
@@ -33,5 +33,5 @@ simpleomnichannel
 - activate the same env as above
 - go to project folder at the same leve of manage.py file
 - run celery with command bellow
-   celery -A omnichannel worker -l info -P gevent 
+- celery -A omnichannel worker -l info -P gevent 
 
